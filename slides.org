@@ -1,0 +1,77 @@
+#+title: Goose in practice
+#+author: Jan Mas \and Łukasz Czajka \and Tobias Heindel
+#+date: \today
+#+latex_class: beamer
+#+latex_class_options: [bigger]
+#+options: H:1 toc:nil
+#+latex_compiler: xelatex
+
+* How do write Anoma applications?
+#+begin_center
+*The Anoma Resource Machine*
+#+end_center
+
+#+begin_export latex
+~
+\pause{}
+#+end_export
+
+#+begin_quote
+The Anoma Resource Machine (ARM) is the part of the Anoma protocol that defines and enforces the rules for valid state updates that satisfy users' preferences.
+#+end_quote
+
+#+begin_export latex
+~
+\pause{}
+#+end_export
+
+* Using the ARM directly
+Writing an application using the ARM directly involves many new concepts:
+1. Resources
+2. Resource logics
+3. Nonces
+4. Actions
+7. Delta proofs
+5. Compliance units
+6. Transactions
+7. etc.
+
+#+begin_comment
+How many people have written an application in full detail using the ARM layer?
+#+end_comment
+
+* How it feels
+#+attr_latex: :width \textwidth
+[[file:img/knight-text.jpg]]
+
+#+begin_comment
+TODO maybe rename you to Developer and ARM to Resource Machine
+#+end_comment
+
+* The Goose
+#+begin_comment
+We realized we needed to improve the developer experience. Because the resource
+machine uses resources for persistance storage and we use transactions to modify
+them, it seemed like designing an abstraction layer based on object oriented programming made sense.
+#+end_comment
+
+** We made it better
+with object oriented programming
+
+* An example: Counter
+#+begin_src kotlin
+class Counter {
+    private var value: Nat
+
+    constructor(ini: Nat) {
+        value = ini
+    }
+
+    fun increment(amount: Nat) {
+        value += amount
+    }
+}
+#+end_src
+
+* Counter in Goose
+Goose is does not (yet) have concrete syntax like Rust or Java.
