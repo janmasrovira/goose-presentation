@@ -1,10 +1,14 @@
-#+title: Goose in practice
-#+author: Jan Mas \and Łukasz Czajka \and Tobias Heindel
+#+title: AVM in practice
+#+author: Jan Mas Rovira \and Łukasz Czajka \and Tobias Heindel
 #+date: \today
 #+latex_class: beamer
 #+latex_class_options: [bigger]
 #+options: H:1 toc:nil
 #+latex_compiler: xelatex
+
+#+latex_header: \usepackage{fontspec}
+#+latex_header: \usepackage{fancyvrb}
+#+latex_header: \setmonofont{FreeMono}
 
 * How do write Anoma applications?
 #+begin_center
@@ -48,7 +52,7 @@ How many people have written an application in full detail using the ARM layer?
 TODO maybe rename you to Developer and ARM to Resource Machine
 #+end_comment
 
-* The Goose
+* AVM
 #+begin_comment
 We realized we needed to improve the developer experience. Because the resource
 machine uses resources for persistance storage and we use transactions to modify
@@ -56,7 +60,43 @@ them, it seemed like designing an abstraction layer based on object oriented pro
 #+end_comment
 
 ** We made it better
-with object oriented programming
+with object oriented programming:
+1. Objects
+2. Method calls
+3. Constructors
+4. Functions (multi object methods)
+5. Intents
+
+
+* Pipeline
+#+begin_src dot :file img/layers.pdf :cmdline -Tpdf :exports none
+digraph G {
+    node [shape=box];
+
+    Concrete [label="Concrete", style=dashed; color=firebrick; fontcolor=firebrick];
+    AVM [label="AVM"; color="#5DBB63"; fontcolor="#5DBB63"];
+    SARM [label="Simple ARM"];
+    ARM [label="Real ARM"];
+
+    { rank=same; Concrete; AVM; SARM; ARM }
+
+    Concrete -> AVM [style=dashed; color=firebrick; minlen=2];
+    AVM -> SARM [minlen=2];
+    SARM -> ARM [style=dashed; color=firebrick; minlen=2];
+}
+#+end_src
+
+#+RESULTS:
+[[file:img/layers.pdf]]
+
+#+attr_latex: :width 1.1\linewidth
+[[file:img/layers.pdf]]
+
+\definecolor{avmcolor}{HTML}{5DBB63}
+\definecolor{firebrick}{HTML}{B22222}
+
+- \textcolor{firebrick}{Red} means it is not yet implemented.
+- \textcolor{avmcolor}{Examples} will be in the \textcolor{avmcolor}{AVM} layer.
 
 * An example: Counter
 #+begin_src kotlin
@@ -73,5 +113,23 @@ class Counter {
 }
 #+end_src
 
-* Counter in Goose
-Goose is does not (yet) have concrete syntax like Rust or Java.
+* Counter in AVM
+:properties:
+:beamer_opt: fragile
+:end:
+
+#+begin_export latex
+\begin{semiverbatim}\footnotesize
+def clab : Class.Label where
+  name := "UniversalCounter"
+  PrivateFields := Nat
+  \pause{}
+  MethodId := Methods
+  MethodArgs id := match id with
+    | Methods.Incr => Nat
+  \pause{}
+  ConstructorId := Constructors
+  ConstructorArgs id := match id with
+    | Constructors.Zero => Unit
+\end{semiverbatim}
+#+end_export

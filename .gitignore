@@ -4,9 +4,9 @@
 *.log
 *.nav
 *.out
-*.pdf
 *.toc
 *.gz
 *.tex
 *.snm
 *.vrb
+/slides.pdf
