@@ -3,19 +3,26 @@
 #+date: \today
 #+latex_class: beamer
 
-# #+latex_class_options: [bigger, xcolor={x11names,table}]
-#+latex_class_options: [bigger, xcolor={x11names}]
+#+latex_class_options: [bigger]
 #+options: H:1 toc:nil
 #+latex_compiler: xelatex
 
 #+latex_header: \usepackage{fontspec}
+#+latex_header: \usepackage{booktabs}
+#+latex_header: \usepackage[table, x11names]{xcolor}
 #+latex_header: \usepackage{fancyvrb}
-#+latex_header: \setmonofont{FreeMono}
 #+latex_header: \usepackage{twemojis}
 #+latex_header: \usepackage{chronos}
 #+latex_header: \usepackage{hyperref}
 
+#+latex_header: \setmonofont{FreeMono}
 #+latex_header: \hypersetup{colorlinks=true,urlcolor=RoyalBlue3,linkcolor=Salmon4,citecolor=Green4}
+
+* Init config :noexport:
+#+name: init
+#+begin_src elisp
+(setq org-latex-hyperref-template "")
+#+end_src
 
 * How to write Anoma applications?
 #+begin_center
@@ -94,7 +101,6 @@ digraph G {
 #+end_src
 
 #+RESULTS:
-[[file:img/layers.pdf]]
 
 #+attr_latex: :width 1.1\linewidth
 [[file:img/layers.pdf]]
@@ -233,11 +239,30 @@ We are done!
   \chronoslife{dates={2025-01-01}:{2025-06-01},name=dark age,at=u1 -| dark age,text content=Dark Age}
   \chronoslife{dates={2025-06-01}:{2025-08-15},name=avm01,at=u2 -| avm01,text content=AVM 0.1 (presented)}
   \chronoslife{dates={2025-08-15}:{2025-12-01},name=avm02,at=u1 -| avm02,text content=AVM 0.2 (next)}
-  \chronosevent{date={2025-09-08},name=june,at=i1 -| june,text content=Today}
+  \chronosevent{date={2025-09-08},name=today,at=i1 -| today, text content=Today}
 \end{chronos}
 #+end_export
 
-* Keep updated at:
+* Versions
+#+macro: yes \texttwemoji{white_check_mark}
+#+macro: no \texttwemoji{x}
+#+attr_latex: :booktabs :align l|cc
+|                         | AVM 0.1   | AVM 0.2 (next) |
+|-------------------------+-----------+-----------|
+| Methods                 | {{{yes}}} | {{{yes}}} |
+| Constructors            | {{{yes}}} | {{{yes}}} |
+| Destructors             | {{{yes}}} | {{{yes}}} |
+| Multi-object functions  | {{{yes}}} | {{{yes}}} |
+| Nested objects          | {{{no}}}  | {{{yes}}} |
+| Nested method calls     | {{{no}}}  | {{{yes}}} |
+| Multi-call transactions | {{{no}}}  | {{{yes}}} |
+
+#+begin_export latex
+~
+\pause{}
+#+end_export
+
+** Keep updated at:
 #+begin_center
 [[https://github.com/anoma/goose-lean][github.com/anoma/goose-lean]]
 #+end_center
