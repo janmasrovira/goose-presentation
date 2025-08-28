@@ -2,15 +2,22 @@
 #+author: Jan Mas Rovira \and Łukasz Czajka \and Tobias Heindel
 #+date: \today
 #+latex_class: beamer
-#+latex_class_options: [bigger]
+
+# #+latex_class_options: [bigger, xcolor={x11names,table}]
+#+latex_class_options: [bigger, xcolor={x11names}]
 #+options: H:1 toc:nil
 #+latex_compiler: xelatex
 
 #+latex_header: \usepackage{fontspec}
 #+latex_header: \usepackage{fancyvrb}
 #+latex_header: \setmonofont{FreeMono}
+#+latex_header: \usepackage{twemojis}
+#+latex_header: \usepackage{chronos}
+#+latex_header: \usepackage{hyperref}
 
-* How do write Anoma applications?
+#+latex_header: \hypersetup{colorlinks=true,urlcolor=RoyalBlue3,linkcolor=Salmon4,citecolor=Green4}
+
+* How to write Anoma applications?
 #+begin_center
 *The Anoma Resource Machine*
 #+end_center
@@ -73,7 +80,7 @@ with object oriented programming:
 digraph G {
     node [shape=box];
 
-    Concrete [label="Concrete", style=dashed; color=firebrick; fontcolor=firebrick];
+    Concrete [label="Source", style=dashed; color=firebrick; fontcolor=firebrick];
     AVM [label="AVM"; color="#5DBB63"; fontcolor="#5DBB63"];
     SARM [label="Simple ARM"];
     ARM [label="Real ARM"];
@@ -98,7 +105,13 @@ digraph G {
 - \textcolor{firebrick}{Red} means it is not yet implemented.
 - \textcolor{avmcolor}{Examples} will be in the \textcolor{avmcolor}{AVM} layer.
 
+#+begin_comment
+ The model is in Lean4, so the concrete syntax will be in Lean. What we call the
+ AVM layer, it's basically a collection of Lean data types and functions.
+#+end_comment
+
 * An example: Counter
+How the =Counter= class would look in a familiar language:
 #+begin_src kotlin
 class Counter {
     private var value: Nat
@@ -118,8 +131,28 @@ class Counter {
 :beamer_opt: fragile
 :end:
 
+** The host language struct
 #+begin_export latex
-\begin{semiverbatim}\footnotesize
+\begin{semiverbatim}\small
+structure Counter where
+  count : Nat
+\end{semiverbatim}
+#+end_export
+
+* Counter in AVM
+:properties:
+:beamer_opt: fragile
+:end:
+
+** The AVM type /signatures/
+#+begin_export latex
+\begin{semiverbatim}\scriptsize
+inductive Constructors where
+  | Zero : Constructors
+  \pause{}
+inductive Methods where
+  | Incr : Methods
+  \pause{}
 def clab : Class.Label where
   name := "UniversalCounter"
   PrivateFields := Nat
@@ -133,3 +166,78 @@ def clab : Class.Label where
     | Constructors.Zero => Unit
 \end{semiverbatim}
 #+end_export
+
+* Counter in AVM
+:properties:
+:beamer_opt: fragile
+:end:
+
+** The implementation of the class members
+#+begin_export latex
+\begin{semiverbatim}\scriptsize
+defConstructor
+ (body := fun (_noArgs : Unit) => \{count := 0 : Counter\})
+
+\pause{}
+defMethod
+ (body := fun (self : Counter) (step : Nat) =>
+   [\{self with count := self.count + step : Counter\}])
+\end{semiverbatim}
+#+end_export
+
+* Counter in AVM
+:properties:
+:beamer_opt: fragile
+:end:
+
+** Translate between host struct and AVM Object
+#+begin_export latex
+\begin{semiverbatim}\scriptsize
+def toObject (c : Counter) : Object clab where
+  quantity := 1
+  privateFields := c.count
+\pause{}
+def fromObject (o : Object clab) : Option Counter := do
+  guard (o.quantity == 1)
+  some (Counter.mk o.privateFields)
+\end{semiverbatim}
+#+end_export
+#+begin_export latex
+~
+\pause{}
+#+end_export
+We are done!
+
+* Yay
+\fontsize{150}{0}\selectfont
+#+begin_center
+\texttwemoji{confetti_ball}
+#+end_center
+
+* Remarks
+1. Yout don't need to be an ARM expert to write an app.
+
+* Timeline
+#+begin_export latex
+\begin{chronos}%
+  [
+    dates={2025-01-01}:{2026-01-01},
+    timeline width=\textwidth,
+    timeline height=.1\textheight,
+    step major year=1,
+    timeline marks=true,
+    timeline bare marks=false,
+    step divisions=12,
+    levels=4:3,
+  ]
+  \chronoslife{dates={2025-01-01}:{2025-06-01},name=dark age,at=u1 -| dark age,text content=Dark Age}
+  \chronoslife{dates={2025-06-01}:{2025-08-15},name=avm01,at=u2 -| avm01,text content=AVM 0.1 (presented)}
+  \chronoslife{dates={2025-08-15}:{2025-12-01},name=avm02,at=u1 -| avm02,text content=AVM 0.2 (next)}
+  \chronosevent{date={2025-09-08},name=june,at=i1 -| june,text content=Today}
+\end{chronos}
+#+end_export
+
+* Keep updated at:
+#+begin_center
+[[https://github.com/anoma/goose-lean][github.com/anoma/goose-lean]]
+#+end_center
