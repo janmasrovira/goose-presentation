@@ -279,6 +279,15 @@ defFunction lab Functions.IssueCheck
 \end{semiverbatim}
 #+end_export
 
+* That's all
+#+begin_center
+That's all for AVM 0.1
+#+end_center
+
+#+begin_center
+What's next?
+#+end_center
+
 * Timeline
 #+begin_export latex
 \begin{chronos}%
@@ -299,19 +308,21 @@ defFunction lab Functions.IssueCheck
 \end{chronos}
 #+end_export
 
-* Versions
-#+macro: yes \texttwemoji{white_check_mark}
-#+macro: no \texttwemoji{x}
+* Versions comparison
+#+macro: check \texttwemoji{white_check_mark}
+#+macro: cross \texttwemoji{x}
 #+attr_latex: :booktabs :align l|cc
-|                         | AVM 0.1   | AVM 0.2 (next) |
-|-------------------------+-----------+----------------|
-| Methods                 | {{{yes}}} | {{{yes}}}      |
-| Constructors            | {{{yes}}} | {{{yes}}}      |
-| Destructors             | {{{yes}}} | {{{yes}}}      |
-| Multi-object functions  | {{{yes}}} | {{{yes}}}      |
-| Nested objects          | {{{no}}}  | {{{yes}}}      |
-| Nested method calls     | {{{no}}}  | {{{yes}}}      |
-| Multi-call transactions | {{{no}}}  | {{{yes}}}      |
+|                         | AVM 0.1     | AVM 0.2 (next) |
+|-------------------------+-------------+----------------|
+| Methods                 | {{{check}}} | {{{check}}}    |
+| Constructors            | {{{check}}} | {{{check}}}    |
+| Destructors             | {{{check}}} | {{{check}}}    |
+| Multi-object functions  | {{{check}}} | {{{check}}}    |
+| Nested objects          | {{{cross}}} | {{{check}}}    |
+| Nested method calls     | {{{cross}}} | {{{check}}}    |
+| Multi-call transactions | {{{cross}}} | {{{check}}}    |
+| Intents                 | basic       | improved       |
+| Surface syntax          | basic       | improved       |
 
 #+begin_export latex
 ~
