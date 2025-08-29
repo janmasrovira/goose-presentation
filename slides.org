@@ -221,7 +221,63 @@ We are done!
 #+end_center
 
 * Remarks
-1. Yout don't need to be an ARM expert to write an app.
+** Result
+1. *New counter* transaction
+1. *Increment* transaction
+
+\pause{}
+** Benefits
+1. Automatically generated resource *logic functions* with *strong guarantees*.
+2. We don't have to generate fresh *nonces* for the resources ourselves.
+3. We don't have to worry about creating *ephemeral* resources to balance
+   transactions.
+4. We don't need to explicitly create *compliance units*.
+5. The *OOP* paradigm is already familiar to most of us.
+
+* AVM overview
+** What can you do with AVM?
+1. Define *Objects*.
+1. Define *Methods*.
+1. Define *Constructors*.
+1. Define *Destructors*.
+1. Define multi-object *Functions*.
+
+* An example: Kudos Bank
+A user can:
+1. *Open* a bank.
+2. *Create tokens* of their own denomination and store them in a bank.
+3. *Transfer* owned tokens to some other user in the same bank.\pause{}
+4. *Issue a check* by substracting a certain amount from a your bank account.
+5. *Transfer* a check to another user.
+6. *Deposit* a check into a bank.
+
+* Issuing a check
+:properties:
+:beamer_opt: fragile
+:end:
+
+#+begin_export latex
+\begin{semiverbatim}\scriptsize
+defFunction lab Functions.IssueCheck
+\alert<2>{(argsInfo := fun
+  | .bank => \{ type := KudosBank \})}
+(body := fun selves args =>
+  \{ \alert<3>{created :=
+    [(selves .bank).overBalances (fun b => b
+      |> Balances.subTokens args.owner
+                            args.denomination
+                            args.quantity)]}
+    \alert<4>{constructed := [{ denomination := args.denomination
+                     owner := args.owner
+                     quantity := args.quantity
+                     : Check }]\})}
+(invariant := fun selves args =>
+  \alert<5>{checkKey args.owner args.key}
+  && \alert<6>{0 < args.quantity}
+  && \alert<7>{args.quantity
+     <= (selves .bank |>.getBalance args.owner args.denomination))}
+\end{semiverbatim}
+#+end_export
 
 * Timeline
 #+begin_export latex
@@ -248,14 +304,14 @@ We are done!
 #+macro: no \texttwemoji{x}
 #+attr_latex: :booktabs :align l|cc
 |                         | AVM 0.1   | AVM 0.2 (next) |
-|-------------------------+-----------+-----------|
-| Methods                 | {{{yes}}} | {{{yes}}} |
-| Constructors            | {{{yes}}} | {{{yes}}} |
-| Destructors             | {{{yes}}} | {{{yes}}} |
-| Multi-object functions  | {{{yes}}} | {{{yes}}} |
-| Nested objects          | {{{no}}}  | {{{yes}}} |
-| Nested method calls     | {{{no}}}  | {{{yes}}} |
-| Multi-call transactions | {{{no}}}  | {{{yes}}} |
+|-------------------------+-----------+----------------|
+| Methods                 | {{{yes}}} | {{{yes}}}      |
+| Constructors            | {{{yes}}} | {{{yes}}}      |
+| Destructors             | {{{yes}}} | {{{yes}}}      |
+| Multi-object functions  | {{{yes}}} | {{{yes}}}      |
+| Nested objects          | {{{no}}}  | {{{yes}}}      |
+| Nested method calls     | {{{no}}}  | {{{yes}}}      |
+| Multi-call transactions | {{{no}}}  | {{{yes}}}      |
 
 #+begin_export latex
 ~
