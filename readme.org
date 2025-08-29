@@ -1,2 +1,2 @@
 * Readme
-TODO
+[[https://janmasrovira.github.io/goose-presentation/slides.pdf][See the latest version of the slides]]
