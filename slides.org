@@ -7,7 +7,6 @@
 #+options: H:1 toc:nil
 #+latex_compiler: xelatex
 
-#+latex_header: \usepackage{fontspec}
 #+latex_header: \usepackage{booktabs}
 #+latex_header: \usepackage[table, x11names]{xcolor}
 #+latex_header: \usepackage{fancyvrb}
@@ -15,7 +14,6 @@
 #+latex_header: \usepackage{chronos}
 #+latex_header: \usepackage{hyperref}
 
-#+latex_header: \setmonofont{FreeMono}
 #+latex_header: \hypersetup{colorlinks=true,urlcolor=RoyalBlue3,linkcolor=Salmon4,citecolor=Green4}
 
 * Init config :noexport:
