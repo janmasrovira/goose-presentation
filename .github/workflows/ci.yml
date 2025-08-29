@@ -1,0 +1,42 @@
+name: Build Org to PDF
+
+on:
+  push:
+    paths:
+      - '**.org'
+      - .github/workflows/ci.yml
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Export Org to LaTeX
+        uses: addnab/docker-run-action@v3
+        with:
+          image: janmasrovira/emacs-org:2025-08-01
+          options: -v ${{ github.workspace }}:/workspace -w /workspace
+          run: |
+            export EMACSLOADPATH=`cat /root/load-path` && \
+              cd /workspace && \
+              emacs slides.org -batch -l ~/init.el \
+                -f load-init-block \
+                -f org-beamer-export-to-latex
+
+      - name: Compile LaTeX to PDF
+        uses: addnab/docker-run-action@v3
+        with:
+          image: janmasrovira/texlive:2025-custom
+          options: -v ${{ github.workspace }}:/workspace -w /workspace
+          run: |
+            latexmk -pdf slides
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: presentation
+          path: slides.pdf
