@@ -15,6 +15,9 @@
 #+latex_header: \usepackage{hyperref}
 
 #+latex_header: \hypersetup{colorlinks=true,urlcolor=RoyalBlue3,linkcolor=Salmon4,citecolor=Green4}
+#+latex_header: \definecolor{avmcolor}{HTML}{008B45}
+#+latex_header: \definecolor{firebrick}{HTML}{B22222}
+#+latex_header: \definecolor{codecolor}{HTML}{6A5ACD}
 
 * Init config :noexport:
 #+name: init
@@ -65,48 +68,65 @@ TODO maybe rename you to Developer and ARM to Resource Machine
 #+end_comment
 
 * AVM
-#+begin_comment
-We realized we needed to improve the developer experience. Because the resource
-machine uses resources for persistance storage and we use transactions to modify
-them, it seemed like designing an abstraction layer based on object oriented programming made sense.
-#+end_comment
-
 ** We made it easier
-with object oriented programming:
-1. Objects
-2. Method calls
-3. Constructors
-4. Functions (multi object methods)
-5. Intents
+by adding an *object oriented programming* layer on top. \pause{}
+
+** Benefits
+1. The *OOP* paradigm is already familiar to most of us. \pause{}
+2. We don't need to worry about the ARM details. \pause{}
+   1. Automatically generated resource *logic functions* with *strong guarantees*. \pause{}
+   2. We don't have to generate fresh *nonces* for the resources ourselves. \pause{}
+   3. We don't have to worry about creating *ephemeral* resources to balance
+      transactions. \pause{}
+   4. We don't need to explicitly create *compliance units*.
+   5. etc.
 
 * Pipeline
-#+begin_src dot :file img/layers.pdf :cmdline -Tpdf :exports none
+#+begin_src dot :file img/layers1.pdf :cmdline -Tpdf :exports none
 digraph G {
     node [shape=box];
 
-    Concrete [label="Source", style=dashed; color=firebrick; fontcolor=firebrick];
-    AVM [label="AVM"; color="#5DBB63"; fontcolor="#5DBB63"];
-    SARM [label="Simple ARM"];
+    AVM [label="AVM"; color=springgreen4; fontcolor=springgreen4];
+    SARM [label="Model ARM"];
     ARM [label="Real ARM"];
 
-    { rank=same; Concrete; AVM; SARM; ARM }
+    { rank=same; AVM; SARM; ARM }
 
-    Concrete -> AVM [style=dashed; color=firebrick; minlen=2];
     AVM -> SARM [minlen=2];
     SARM -> ARM [style=dashed; color=firebrick; minlen=2];
 }
 #+end_src
 
 #+RESULTS:
+[[file:img/layers1.pdf]]
 
 #+attr_latex: :width 1.1\linewidth
-[[file:img/layers.pdf]]
+[[file:img/layers1.pdf]]
 
-\definecolor{avmcolor}{HTML}{5DBB63}
-\definecolor{firebrick}{HTML}{B22222}
+* Pipeline
+#+begin_src dot :file img/layers2.pdf :cmdline -Tpdf :exports none
+digraph G {
+    node [shape=box];
 
-- \textcolor{firebrick}{Red} means it is not yet implemented.
-- \textcolor{avmcolor}{Examples} will be in the \textcolor{avmcolor}{AVM} layer.
+    Concrete [label="Code", style=dashed; color=slateblue; fontcolor=slateblue];
+    AVM [label="AVM"; color=springgreen4; fontcolor=springgreen4];
+    SARM [label="Model ARM"];
+    ARM [label="Real ARM"];
+
+    { rank=same; Concrete; AVM; SARM; ARM }
+
+    Concrete -> AVM [style=dashed; color=slateblue; minlen=2];
+    AVM -> SARM [minlen=2];
+    SARM -> ARM [style=dashed; color=firebrick; minlen=2];
+}
+#+end_src
+
+#+attr_latex: :width 1.1\linewidth
+[[file:img/layers2.pdf]]
+
+- Examples will be in \textcolor{codecolor}{code} and in the
+  \textcolor{avmcolor}{AVM} layer.
+- \textcolor{firebrick}{Red} is not yet implemented.
 
 # It needs to be explained why source missing is important!!
 # pseudocode in blue instead of Source
@@ -117,8 +137,7 @@ digraph G {
  AVM layer, it's basically a collection of Lean data types and functions.
 #+end_comment
 
-* An example: Counter
-How the =Counter= class would look in a familiar language:
+* An example: Counter in \textcolor{codecolor}{code}
 #+begin_src kotlin
 class Counter {
     private var value: Nat
@@ -133,11 +152,10 @@ class Counter {
 }
 #+end_src
 
-* Counter in AVM
+* Counter in the \textcolor{avmcolor}{AVM layer}
 :properties:
 :beamer_opt: fragile
 :end:
-
 ** The host language struct
 #+begin_export latex
 \begin{semiverbatim}\small
@@ -146,7 +164,7 @@ structure Counter where
 \end{semiverbatim}
 #+end_export
 
-* Counter in AVM
+* Counter in the \textcolor{avmcolor}{AVM layer}
 :properties:
 :beamer_opt: fragile
 :end:
@@ -174,7 +192,7 @@ def clab : Class.Label where
 \end{semiverbatim}
 #+end_export
 
-* Counter in AVM
+* Counter in the \textcolor{avmcolor}{AVM layer}
 :properties:
 :beamer_opt: fragile
 :end:
@@ -192,7 +210,7 @@ defMethod
 \end{semiverbatim}
 #+end_export
 
-* Counter in AVM
+* Counter in  the \textcolor{avmcolor}{AVM layer}
 :properties:
 :beamer_opt: fragile
 :end:
@@ -215,31 +233,26 @@ def fromObject (o : Object clab) : Option Counter := do
 #+end_export
 We are done!
 
+* Result
+** ARM Transactions
+1. *New counter* transaction
+2. *Increment* transaction
+
+\pause{}
+
+** Safety guarantees
+The counter resources can only be updated through their class interface. This is
+ensured by the generated resource logic function.
+
 * Yay
 \fontsize{150}{0}\selectfont
 #+begin_center
 \texttwemoji{confetti_ball}
 #+end_center
 
-* Remarks
-** Result
-1. *New counter* transaction
-1. *Increment* transaction
-
-\pause{}
-
-# move benefits to just after the meme image
-** Benefits
-1. Automatically generated resource *logic functions* with *strong guarantees*.
-2. We don't have to generate fresh *nonces* for the resources ourselves.
-3. We don't have to worry about creating *ephemeral* resources to balance
-   transactions.
-4. We don't need to explicitly create *compliance units*.
-5. The *OOP* paradigm is already familiar to most of us.
-
-* AVM overview
+* AVM language
 ** What can you do with AVM?
-1. Define *Objects*.
+1. Define *Classes*.
 1. Define *Methods*.
 1. Define *Constructors*.
 1. Define *Destructors*.
@@ -247,14 +260,32 @@ We are done!
 
 * An example: Kudos Bank
 A user can:
-1. *Open* a bank.
-2. *Create tokens* of their own denomination and store them in a bank.
-3. *Transfer* owned tokens to some other user in the same bank.\pause{}
-4. *Issue a check* by substracting a certain amount from a your bank account.
-5. *Transfer* a check to another user.
+1. *Open* a bank. \pause{}
+2. *Create tokens* of their own denomination and store them in a bank. \pause{}
+3. *Transfer* owned tokens to some other user in the same bank. \pause{}
+4. *Issue a check* by substracting a certain amount from a your bank account. \pause{}
+5. *Transfer* a check to another user. \pause{}
 6. *Deposit* a check into a bank.
 
-* Issuing a check
+* Issuing a check in \textcolor{codecolor}{code}
+:properties:
+:beamer_opt: fragile
+:end:
+
+#+begin_export latex
+\begin{semiverbatim}\footnotesize
+fun issueCheck(bank: Bank, d: Denom, n: Nat
+               , owner: PubId, key: PrivKey) \{
+  \alert<2>{assert checkKey(owner, key);}
+  \alert<3>{assert n > 0;}
+  \alert<4>{assert bank.getBalance(owner, d) >= n;}
+  \alert<5>{bank.subtract(owner, d, n);}
+  \alert<6>{new Check(owner, d, n);}\alert<7>{}
+\}
+\end{semiverbatim}
+#+end_export
+
+* Issuing a check in the \textcolor{avmcolor}{AVM layer}
 :properties:
 :beamer_opt: fragile
 :end:
@@ -279,10 +310,11 @@ defFunction lab Functions.IssueCheck
   && \alert<6>{0 < args.quantity}
   && \alert<7>{args.quantity
      <= (selves .bank |>.getBalance args.owner args.denomination))}
+     \alert<8>{}
 \end{semiverbatim}
 #+end_export
 
-# more time for this. Final slide with no highlighting
+
 * That's all
 #+begin_center
 That's all for AVM 0.1
