@@ -71,14 +71,13 @@ machine uses resources for persistance storage and we use transactions to modify
 them, it seemed like designing an abstraction layer based on object oriented programming made sense.
 #+end_comment
 
-** We made it better
+** We made it easier
 with object oriented programming:
 1. Objects
 2. Method calls
 3. Constructors
 4. Functions (multi object methods)
 5. Intents
-
 
 * Pipeline
 #+begin_src dot :file img/layers.pdf :cmdline -Tpdf :exports none
@@ -108,6 +107,10 @@ digraph G {
 
 - \textcolor{firebrick}{Red} means it is not yet implemented.
 - \textcolor{avmcolor}{Examples} will be in the \textcolor{avmcolor}{AVM} layer.
+
+# It needs to be explained why source missing is important!!
+# pseudocode in blue instead of Source
+# emphasis on not worrying about AVM syntax but the information
 
 #+begin_comment
  The model is in Lean4, so the concrete syntax will be in Lean. What we call the
@@ -224,6 +227,8 @@ We are done!
 1. *Increment* transaction
 
 \pause{}
+
+# move benefits to just after the meme image
 ** Benefits
 1. Automatically generated resource *logic functions* with *strong guarantees*.
 2. We don't have to generate fresh *nonces* for the resources ourselves.
@@ -277,6 +282,7 @@ defFunction lab Functions.IssueCheck
 \end{semiverbatim}
 #+end_export
 
+# more time for this. Final slide with no highlighting
 * That's all
 #+begin_center
 That's all for AVM 0.1
