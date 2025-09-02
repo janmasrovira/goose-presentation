@@ -44,6 +44,10 @@ The Anoma Resource Machine (ARM) is the part of the Anoma protocol that defines 
 \pause{}
 #+end_export
 
+#+begin_comment
+It's anoma day. So let's write some apps for anoma. If you want to write an app, the main component of the protocol that you'll interact with is the Resource Machine.
+
+#+end_comment
 * Using the ARM directly
 Writing an application using the ARM directly involves many new concepts:
 1. Resources
@@ -57,6 +61,11 @@ Writing an application using the ARM directly involves many new concepts:
 
 #+begin_comment
 How many people have written an application in full detail using the ARM layer?
+How many thought that was easy?
+
+Yeah, I see. The problem is that writing applications directly to the ARM feels
+like writing assembly code and you must keep a lot if things in your head. It's
+also very easy to mess up the logic functions.
 #+end_comment
 
 * How it feels
@@ -64,7 +73,8 @@ How many people have written an application in full detail using the ARM layer?
 [[file:img/knight-text.jpg]]
 
 #+begin_comment
-TODO maybe rename you to Developer and ARM to Resource Machine
+This is how it feels. But we don't want that. We want to keep all the good
+things about the ARM and make it easier for developers to write apps for it.
 #+end_comment
 
 * AVM
@@ -74,12 +84,37 @@ by adding an *object oriented programming* layer on top. \pause{}
 ** Benefits
 1. The *OOP* paradigm is already familiar to most of us. \pause{}
 2. We don't need to worry about the ARM details. \pause{}
-   1. Automatically generated resource *logic functions* with *strong guarantees*. \pause{}
-   2. We don't have to generate fresh *nonces* for the resources ourselves. \pause{}
-   3. We don't have to worry about creating *ephemeral* resources to balance
-      transactions. \pause{}
-   4. We don't need to explicitly create *compliance units*.
-   5. etc.
+   - Automatically generated resource *logic functions* with *strong guarantees*. \pause{}
+   - We don't have to generate fresh *nonces* for the resources ourselves.
+   - We don't have to worry about creating *ephemeral* resources to balance
+     transactions.
+   - We don't need to explicitly create *compliance units*.
+   - etc.
+
+#+begin_comment
+We made it easier by adding an object oriented layer on top of it. Before we
+discuss the details, what are the benefits of this?
+#+end_comment
+
+* Pipeline
+#+begin_src dot :file img/layers0.pdf :cmdline -Tpdf :exports none
+digraph G {
+    node [shape=box];
+
+    AVM [label="AVM"; color=springgreen4; fontcolor=springgreen4];
+    SARM [label="ARM Model"];
+
+    { rank=same; AVM; SARM }
+
+    AVM -> SARM [minlen=2];
+}
+#+end_src
+
+#+RESULTS:
+[[file:img/layers0.pdf]]
+
+#+attr_latex: :width 1.1\linewidth
+[[file:img/layers0.pdf]]
 
 * Pipeline
 #+begin_src dot :file img/layers1.pdf :cmdline -Tpdf :exports none
@@ -87,7 +122,7 @@ digraph G {
     node [shape=box];
 
     AVM [label="AVM"; color=springgreen4; fontcolor=springgreen4];
-    SARM [label="Model ARM"];
+    SARM [label="ARM Model"];
     ARM [label="Real ARM"];
 
     { rank=same; AVM; SARM; ARM }
@@ -103,14 +138,14 @@ digraph G {
 #+attr_latex: :width 1.1\linewidth
 [[file:img/layers1.pdf]]
 
-* Pipeline
+* Full pipeline
 #+begin_src dot :file img/layers2.pdf :cmdline -Tpdf :exports none
 digraph G {
     node [shape=box];
 
     Concrete [label="Code", style=dashed; color=slateblue; fontcolor=slateblue];
     AVM [label="AVM"; color=springgreen4; fontcolor=springgreen4];
-    SARM [label="Model ARM"];
+    SARM [label="ARM Model"];
     ARM [label="Real ARM"];
 
     { rank=same; Concrete; AVM; SARM; ARM }
@@ -121,20 +156,31 @@ digraph G {
 }
 #+end_src
 
+#+RESULTS:
+[[file:img/layers2.pdf]]
+
 #+attr_latex: :width 1.1\linewidth
 [[file:img/layers2.pdf]]
 
-- Examples will be in \textcolor{codecolor}{code} and in the
-  \textcolor{avmcolor}{AVM} layer.
-- \textcolor{firebrick}{Red} is not yet implemented.
-
-# It needs to be explained why source missing is important!!
-# pseudocode in blue instead of Source
-# emphasis on not worrying about AVM syntax but the information
+Examples will be in:
+1. \textcolor{codecolor}{code}, Java-like syntax.
+2. \textcolor{avmcolor}{AVM} layer, Lean syntax.
 
 #+begin_comment
- The model is in Lean4, so the concrete syntax will be in Lean. What we call the
- AVM layer, it's basically a collection of Lean data types and functions.
+The model is in Lean4, so the concrete syntax will be in Lean. What we call the
+AVM layer, it's basically a collection of Lean data types and functions.
+Formal Model: Written in Lean, so I’ll show some examples directly in Lean syntax.
+
+Pseudocode: I’ll also show code-like examples in a Java/Kotlin-style syntax.
+
+Why two notations?
+
+Lean: The model is built in Lean4.
+
+Pseudocode: For readability and intuition.
+
+We don’t yet have the concrete syntax of the future language. The pseudocode is
+just a placeholder for now.
 #+end_comment
 
 * An example: Counter in \textcolor{codecolor}{code}
@@ -142,8 +188,8 @@ digraph G {
 class Counter {
     private var value: Nat
 
-    constructor(ini: Nat) {
-        value = ini
+    constructor() {
+        value = 0
     }
 
     fun increment(amount: Nat) {
@@ -172,23 +218,24 @@ structure Counter where
 ** The AVM type /signatures/
 #+begin_export latex
 \begin{semiverbatim}\scriptsize
-inductive Constructors where
-  | Zero : Constructors
-  \pause{}
-inductive Methods where
-  | Incr : Methods
-  \pause{}
-def clab : Class.Label where
+\alert<1>{def clab : Class.Label where
   name := "UniversalCounter"
-  PrivateFields := Nat
-  \pause{}
-  MethodId := Methods
-  MethodArgs id := match id with
-    | Methods.Incr => Nat
-  \pause{}
-  ConstructorId := Constructors
-  ConstructorArgs id := match id with
-    | Constructors.Zero => Unit
+  PrivateFields := Nat}
+
+\alert<2>{inductive Constructors where
+  | Ini : Constructors
+
+ConstructorId := Constructors
+ConstructorArgs id := match id with
+    | Constructors.Ini => Unit}
+
+\alert<3>{inductive Methods where
+  | Increment : Methods
+
+MethodId := Methods
+MethodArgs id := match id with
+    | Methods.Increment => Nat}
+\alert<4>{}
 \end{semiverbatim}
 #+end_export
 
@@ -200,13 +247,12 @@ def clab : Class.Label where
 ** The implementation of the class members
 #+begin_export latex
 \begin{semiverbatim}\scriptsize
-defConstructor
- (body := fun (_noArgs : Unit) => \{count := 0 : Counter\})
+\alert<1>{defConstructor
+ (body := fun (_noArgs : Unit) => \{count := 0 : Counter\})}
 
-\pause{}
-defMethod
+\alert<2>{defMethod
  (body := fun (self : Counter) (step : Nat) =>
-   [\{self with count := self.count + step : Counter\}])
+   [\{self with count := self.count + step : Counter\}])}
 \end{semiverbatim}
 #+end_export
 
@@ -217,21 +263,24 @@ defMethod
 
 ** Translate between host struct and AVM Object
 #+begin_export latex
-\begin{semiverbatim}\scriptsize
-def toObject (c : Counter) : Object clab where
+\begin{semiverbatim}\footnotesize
+\alert<1>{structure Object (label : Class.Label) where
+  quantity : Nat
+  privateFields : label.PrivateFields}
+
+\alert<2>{def toObject (c : Counter) : Object clab where
   quantity := 1
-  privateFields := c.count
-\pause{}
-def fromObject (o : Object clab) : Option Counter := do
+  privateFields := c.count}
+
+\alert<3>{def fromObject (o : Object clab) : Option Counter := do
   guard (o.quantity == 1)
-  some (Counter.mk o.privateFields)
+  some (Counter.mk o.privateFields)}
 \end{semiverbatim}
 #+end_export
 #+begin_export latex
 ~
-\pause{}
+\only<4>{That's all! \texttwemoji{confetti_ball}}
 #+end_export
-We are done!
 
 * Result
 ** ARM Transactions
@@ -243,6 +292,8 @@ We are done!
 ** Safety guarantees
 The counter resources can only be updated through their class interface. This is
 ensured by the generated resource logic function.
+
+For instance, it is impossible to subtract from a counter.
 
 * Yay
 \fontsize{150}{0}\selectfont
@@ -293,27 +344,26 @@ fun issueCheck(bank: Bank, d: Denom, n: Nat
 #+begin_export latex
 \begin{semiverbatim}\scriptsize
 defFunction lab Functions.IssueCheck
-\alert<2>{(argsInfo := fun
-  | .bank => \{ type := KudosBank \})}
-(body := fun selves args =>
-  \{ \alert<3>{created :=
-    [(selves .bank).overBalances (fun b => b
-      |> Balances.subTokens args.owner
-                            args.denomination
-                            args.quantity)]}
-    \alert<4>{constructed := [{ denomination := args.denomination
-                     owner := args.owner
-                     quantity := args.quantity
-                     : Check }]\})}
-(invariant := fun selves args =>
-  \alert<5>{checkKey args.owner args.key}
-  && \alert<6>{0 < args.quantity}
-  && \alert<7>{args.quantity
-     <= (selves .bank |>.getBalance args.owner args.denomination))}
-     \alert<8>{}
+ \alert<2>{(argsInfo := fun
+   | .bank => \{ type := KudosBank \})}
+ (invariant := fun selves args =>
+   \alert<3>{checkKey args.owner args.key}
+   && \alert<4>{0 < args.quantity}
+   && \alert<5>{args.quantity
+      <= (selves .bank |>.getBalance args.owner args.denomination))}
+ (body := fun selves args =>
+   \{ \alert<6>{updated :=
+     [(selves .bank).overBalances (fun b => b
+       |> Balances.subTokens args.owner
+                             args.denomination
+                             args.quantity)]}
+     \alert<7>{constructed := [{ denomination := args.denomination
+                      owner := args.owner
+                      quantity := args.quantity
+                      : Check }]\})}
+      \alert<8>{}
 \end{semiverbatim}
 #+end_export
-
 
 * That's all
 #+begin_center
@@ -369,3 +419,12 @@ What's next?
 #+begin_center
 [[https://github.com/anoma/goose-lean][github.com/anoma/goose-lean]]
 #+end_center
+
+#+begin_comment
+Closing thoughts:
+Let me wrap up with a few final thoughts:
+I'm personally very excited about this project because despite
+being very young it has already shown to be very useful. Before, it would take
+multiple days to write an app and it was hard to get everything right. Now it
+takes a couple of hours. So I hope you are excited too, Thank you.
+#+end_comment

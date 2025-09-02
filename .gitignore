@@ -10,3 +10,5 @@
 *.snm
 *.vrb
 /slides.pdf
+*.synctex
+/slides.synctex(busy)
