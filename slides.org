@@ -314,7 +314,7 @@ A user can:
 1. *Open* a bank. \pause{}
 2. *Create tokens* of their own denomination and store them in a bank. \pause{}
 3. *Transfer* owned tokens to some other user in the same bank. \pause{}
-4. *Issue a check* by substracting a certain amount from a your bank account. \pause{}
+4. *Issue a check* by subtracting a certain amount from a your bank account. \pause{}
 5. *Transfer* a check to another user. \pause{}
 6. *Deposit* a check into a bank.
 
@@ -428,3 +428,8 @@ being very young it has already shown to be very useful. Before, it would take
 multiple days to write an app and it was hard to get everything right. Now it
 takes a couple of hours. So I hope you are excited too, Thank you.
 #+end_comment
+
+* The end
+#+begin_center
+Thank you!
+#+end_center
