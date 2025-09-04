@@ -222,19 +222,19 @@ structure Counter where
   name := "UniversalCounter"
   PrivateFields := Nat}
 
-\alert<2>{inductive Constructors where
-  | Ini : Constructors
+inductive Constructors where
+  | \alert<2>{Ini} : Constructors
 
 ConstructorId := Constructors
 ConstructorArgs id := match id with
-    | Constructors.Ini => Unit}
+    | Constructors.Ini => \alert<2>{Unit}
 
-\alert<3>{inductive Methods where
-  | Increment : Methods
+inductive Methods where
+  | \alert<3>{Increment} : Methods
 
 MethodId := Methods
 MethodArgs id := match id with
-    | Methods.Increment => Nat}
+    | Methods.Increment => \alert<3>{Nat}
 \alert<4>{}
 \end{semiverbatim}
 #+end_export
@@ -365,14 +365,23 @@ defFunction lab Functions.IssueCheck
 \end{semiverbatim}
 #+end_export
 
-* That's all
+* Summary
 #+begin_center
 That's all for AVM 0.1
 #+end_center
+** What we achieved
+1. A *nice object oriented layer* that abstracts the intricacies of the Anoma
+   Resource Machine. \pause{}
+2. *100x speedup* in application development time. \pause{}
+3. Strong *safety guarantees* ensured by the resource logics. \pause{}
+4. The prototype itself is implemented in Lean, but it can be easily translated
+   to any language. E.g. Rust.
 
-#+begin_center
-What's next?
-#+end_center
+#+begin_export latex
+~
+\pause{}
+#+end_export
+** What's next?
 
 * Timeline
 #+begin_export latex
