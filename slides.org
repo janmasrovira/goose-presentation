@@ -374,8 +374,9 @@ That's all for AVM 0.1
    Resource Machine. \pause{}
 2. *100x speedup* in application development time. \pause{}
 3. Strong *safety guarantees* ensured by the resource logics. \pause{}
-4. The prototype itself is implemented in Lean, but it can be easily translated
-   to any language. E.g. Rust.
+4. Ready for *designing Anoma apps*. \pause{}
+5. The prototype itself is implemented in Lean, but it can be easily translated
+   into any language. E.g. Rust.
 
 #+begin_export latex
 ~
